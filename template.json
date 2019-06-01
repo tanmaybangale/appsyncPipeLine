@@ -1,0 +1,177 @@
+{
+    "Description": "AWSAppSync Calculator Example",
+    "Resources": {
+        "GraphQLApi": {
+            "Type": "AWS::AppSync::GraphQLApi",
+            "Properties": {
+                "Name": "AWSAppSync Calculator Example",
+                "AuthenticationType": "API_KEY"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "f1857190-b345-4b3c-b531-cc25a260f40c"
+                }
+            }
+        },
+        "ApiKey": {
+            "Type": "AWS::AppSync::ApiKey",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                    "GraphQLApi",
+                    "ApiId"
+                    ]
+                }
+            }
+        },
+        "NoneDataSource": {
+            "Type": "AWS::AppSync::DataSource",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLApi",
+                        "ApiId"
+                    ]
+                },
+                "Name": "Datasrc",
+                "Type": "NONE"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "d057ea78-4b86-44b5-bb7d-12b3522eae46"
+                }
+            }
+        },
+        "QuerygetAdditionResovler": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "Schema",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLApi",
+                        "ApiId"
+                    ]
+                },
+                "TypeName": "Query",
+                "FieldName": "getAddition",
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "NoneDataSource",
+                        "Name"
+                    ]
+                },
+                "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\" : {\n        \"a\" : $util.dynamodb.toDynamoDBJson($ctx.args.a)\n    }\n}\n",
+                "ResponseMappingTemplate": "$utils.toJson($ctx.result)"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "5299956b-30b7-4844-beb0-3e843ffdfcf2"
+                }
+            }
+        },
+        "Schema": {
+            "Type": "AWS::AppSync::GraphQLSchema",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLApi",
+                        "ApiId"
+                    ]
+                },
+                "Definition": "type result {\n    res : Int\n}\ntype Query {\n    getAddition( a : Int!, b: Int! ) : result\n    \n}\nschema {\n    query: Query\n}\n"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "834b354d-4b93-4916-85d0-07741b849ee8"
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "GraphQLApiARN": {
+            "Description": "The App ID of the GraphQL endpoint.",
+            "Value": {
+                "Ref": "GraphQLApi"
+            }
+        },
+        "GraphQLApiId": {
+            "Description": "The App ID of the GraphQL endpoint.",
+            "Value": {
+                "Fn::GetAtt": [
+                    "GraphQLApi",
+                    "ApiId"
+                ]
+            }
+        },
+        "GraphQLApiEndpoint": {
+            "Description": "The URL for the GraphQL endpoint.",
+            "Value": {
+                "Fn::GetAtt": [
+                    "GraphQLApi",
+                    "GraphQLUrl"
+                ]
+            }
+        },
+        "apikey": {
+            "Description": "The Api Key of the AppSync endpoint",
+            "Value": {
+                "Ref": "ApiKey"
+            }
+        }
+    },
+    "Metadata": {
+        "AWS::CloudFormation::Designer": {
+            "f1857190-b345-4b3c-b531-cc25a260f40c": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 60,
+                    "y": 90
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "834b354d-4b93-4916-85d0-07741b849ee8": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 180,
+                    "y": 90
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "d057ea78-4b86-44b5-bb7d-12b3522eae46": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 60,
+                    "y": 210
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "5299956b-30b7-4844-beb0-3e843ffdfcf2": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 60,
+                    "y": 330
+                },
+                "z": 1,
+                "embeds": [],
+                "dependson": [
+                    "834b354d-4b93-4916-85d0-07741b849ee8"
+                ]
+            }
+        }
+    }
+}
